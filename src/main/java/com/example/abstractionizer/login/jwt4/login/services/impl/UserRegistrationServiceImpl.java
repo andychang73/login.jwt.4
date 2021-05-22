@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.abstractionizer.login.jwt4.constants.RedisConstant.getRegisteringUserName;
@@ -24,13 +26,28 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private JavaMailSender javaMailSender;
 
     @Override
-    public void setUserRegisterInfo(String username, User user) {
-        redisUtil.set(getUserRegistration(username), user, 5L, TimeUnit.MINUTES);
+    public void setUserRegisterInfo(String uuid, User user) {
+        redisUtil.set(getUserRegistration(uuid), user, 5L, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public Optional<User> getUserRegistrationInfo(String uuid) {
+        return Optional.ofNullable(redisUtil.get(getUserRegistration(uuid), User.class));
+    }
+
+    @Override
+    public void deleteUserRegistrationInfo(String uuid) {
+        redisUtil.deleteKey(getUserRegistration(uuid));
     }
 
     @Override
     public void setRegisteringUsername(String username) {
         redisUtil.set(getRegisteringUserName(username), username, 5L, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public void deleteRegisteringUsername(String username) {
+        redisUtil.deleteKey(getRegisteringUserName(username));
     }
 
     @Override

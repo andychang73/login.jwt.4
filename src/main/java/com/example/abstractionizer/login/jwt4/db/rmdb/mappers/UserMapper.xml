@@ -9,7 +9,7 @@
             <if test="id != null and id > 0">
                 AND id = #{id}
             </if>
-            <if test="username != null and username = ''">
+            <if test="username != null and username != ''">
                 AND username = #{username}
             </if>
         </where>
