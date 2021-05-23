@@ -1,6 +1,7 @@
 package com.example.abstractionizer.login.jwt4.login.controllers;
 
 import com.example.abstractionizer.login.jwt4.login.businesses.UserBusiness;
+import com.example.abstractionizer.login.jwt4.models.bo.ChangePasswordBo;
 import com.example.abstractionizer.login.jwt4.models.bo.UpdateInfoBo;
 import com.example.abstractionizer.login.jwt4.models.bo.UserLoginBo;
 import com.example.abstractionizer.login.jwt4.models.bo.UserRegisterBo;
@@ -41,5 +42,18 @@ public class UserController extends BaseController{
     public SuccessResponse<UserInfoVo> update(@RequestHeader("Authorization") String token,
                                               @RequestBody @Valid UpdateInfoBo bo){
         return new SuccessResponse<>(userBusiness.updateInfo(this.getUserInfo(token).getUserId(), bo));
+    }
+
+    @PutMapping("/changePassword")
+    public SuccessResponse changePassword(@RequestHeader("Authorization") String token,
+                                          @RequestBody @Valid ChangePasswordBo bo){
+        userBusiness.changePassword(this.getUserInfo(token).getUserId(),bo);
+        return new SuccessResponse();
+    }
+
+    @GetMapping("/logOut")
+    public SuccessResponse logOut(@RequestHeader("Authorization") String token){
+        userBusiness.logOut(this.getUserInfo(token).getUserId(), token.substring(7));
+        return new SuccessResponse();
     }
 }

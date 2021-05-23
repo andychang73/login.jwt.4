@@ -6,7 +6,13 @@ public interface UserLoginService {
 
      Long countLoginFailure(String key);
 
-     void setUserLoggedIn(String username);
+     void setUserLoggedIn(Integer userId);
 
-     boolean isUserCurrentlyLoggedIn(String username);
+     void deleteLoggedInUser(Integer userId);
+
+     boolean isUserCurrentlyLoggedIn(Integer userId);
+
+     void logOut(String token, Long duration);
+
+     boolean isUserLoggedOut(String token);
 }

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -85,7 +86,7 @@ public class UserBusinessImpl implements UserBusiness {
         if(!userService.isAccountFrozen(user.getId())){
             throw new CustomException(ErrorCode.ACCOUNT_FROZEN);
         }
-        if(userLoginService.isUserCurrentlyLoggedIn(user.getUsername())){
+        if(userLoginService.isUserCurrentlyLoggedIn(user.getId())){
             throw new CustomException(ErrorCode.USER_LOGGED_IN);
         }
 
@@ -94,6 +95,7 @@ public class UserBusinessImpl implements UserBusiness {
                 userService.freezeAccount(user.getId(), false);
                 throw new CustomException(ErrorCode.ACCOUNT_FROZEN);
             }
+            throw new CustomException(ErrorCode.INVALID_CREDENTIAL);
         }
 
         UserInfoVo userInfovo = new UserInfoVo()
@@ -104,7 +106,7 @@ public class UserBusinessImpl implements UserBusiness {
 
         final String token = jwtUtil.generateToken(user.getUsername(), userInfovo);
         userService.updateLastLoginTime(user.getId(), new UpdateInfoBo().setLastLoginTime(new Date()));
-        userLoginService.setUserLoggedIn(user.getUsername());
+        userLoginService.setUserLoggedIn(user.getId());
 
         return new UserLoginVo().setToken(token);
     }
@@ -119,7 +121,31 @@ public class UserBusinessImpl implements UserBusiness {
     }
 
     @Override
-    public void changePassword(ChangePasswordBo bo) {
+    public void changePassword(Integer userId, ChangePasswordBo bo) {
+        User user = userService.getUser(userId, null).orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        if(!userLoginService.authenticate(MD5Util.md5(bo.getOldPassword()), user.getPassword())){
+            throw new CustomException(ErrorCode.INVALID_CREDENTIAL);
+        }
+
+        if(!Objects.equals(bo.getNewPassword(), bo.getConfirmPassword())){
+            throw new CustomException(ErrorCode.NEW_PASSWORD_INCONSISTENCY);
+        }
+
+        if(Objects.equals(user.getPassword(), MD5Util.md5(bo.getNewPassword()))){
+            throw new CustomException(ErrorCode.NEW_OLD_PASSWORD_SAME);
+        }
+        userService.changePassword(userId, MD5Util.md5(bo.getConfirmPassword()));
+    }
+
+    @Override
+    public void logOut(Integer userId, String token) {
+        Long duration = jwtUtil.getExpirationFromToken(token).getTime() - new Date().getTime();
+        userLoginService.logOut(token, duration);
+        userLoginService.deleteLoggedInUser(userId);
+    }
+
+    public static void main(String[] args){
+        System.out.println(MD5Util.md5("Abc1234567!"));
     }
 }

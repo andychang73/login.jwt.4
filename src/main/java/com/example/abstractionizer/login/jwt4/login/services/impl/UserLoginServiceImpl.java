@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserLoginServiceImpl implements UserLoginService {
 
+    private final Long loginFailureDuration = 5l;
+
     @Autowired
     private RedisUtil redisUtil;
 
@@ -29,18 +31,33 @@ public class UserLoginServiceImpl implements UserLoginService {
         if(redisUtil.isKeyExists(key)){
             return redisUtil.increment(key, count);
         }
-        redisUtil.set(key, count, 5L, TimeUnit.MINUTES);
+        redisUtil.set(key, count, loginFailureDuration, TimeUnit.MINUTES);
         return count;
     }
 
     @Override
-    public void setUserLoggedIn(String username) {
-        redisUtil.set(RedisConstant.getUserLoggedIn(username), username, JwtUtil.validity, TimeUnit.MILLISECONDS);
+    public void setUserLoggedIn(Integer userId) {
+        redisUtil.set(RedisConstant.getUserLoggedIn(userId), userId, JwtUtil.validity, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public boolean isUserCurrentlyLoggedIn(String username) {
-        return redisUtil.isKeyExists(RedisConstant.getUserLoggedIn(username));
+    public void deleteLoggedInUser(Integer userId) {
+        redisUtil.deleteKey(RedisConstant.getUserLoggedIn(userId));
+    }
+
+    @Override
+    public boolean isUserCurrentlyLoggedIn(Integer userId) {
+        return redisUtil.isKeyExists(RedisConstant.getUserLoggedIn(userId));
+    }
+
+    @Override
+    public void logOut(String token, Long duration) {
+        redisUtil.set(RedisConstant.getUserLogOut(token), token, duration, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public boolean isUserLoggedOut(String token) {
+        return redisUtil.isKeyExists(RedisConstant.getUserLogOut(token));
     }
 
 }

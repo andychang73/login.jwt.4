@@ -25,4 +25,6 @@ public interface UserMapper extends BaseMapper<User> {
     int updateUserInfo(@Param("id") Integer id, @Param("user") UpdateInfoBo bo);
 
     UserInfoVo getByIdOrUsername(@Param("id") Integer id, @Param("username") String username);
+
+    int changePassword(@Param("id") Integer id, @Param("password") String password);
 }

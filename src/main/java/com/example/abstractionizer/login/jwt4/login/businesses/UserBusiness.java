@@ -17,5 +17,7 @@ public interface UserBusiness {
 
     UserInfoVo updateInfo(Integer userId, UpdateInfoBo bo);
 
-    void changePassword(ChangePasswordBo bo);
+    void changePassword(Integer userId, ChangePasswordBo bo);
+
+    void logOut(Integer userId, String token);
 }

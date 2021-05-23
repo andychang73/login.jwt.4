@@ -23,4 +23,6 @@ public interface UserService {
     void updateLastLoginTime(Integer id, UpdateInfoBo bo);
 
     void updateUserInfo(Integer id, UpdateInfoBo bo);
+
+    void changePassword(Integer id, String password);
 }

@@ -8,6 +8,7 @@ public enum ErrorCode implements BaseError {
     DATA_NOT_FOUND(HttpStatus.NOT_FOUND, "10002", "Data not found"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "10003", "User account does not exist"),
     USER_LOGGED_IN(HttpStatus.INTERNAL_SERVER_ERROR, "10004", "This account has already been logged in"),
+    USER_LOGGED_OUT(HttpStatus.BAD_REQUEST, "100013", "User has been logged out"),
     USERNAME_EXISTS(HttpStatus.INTERNAL_SERVER_ERROR, "10005", "Username already exists"),
     INVALID_CREDENTIAL(HttpStatus.INTERNAL_SERVER_ERROR, "10006", "Invalid Credential"),
     ACCOUNT_FROZEN(HttpStatus.INTERNAL_SERVER_ERROR, "10007", "Your account has been frozen, please contact admin"),
