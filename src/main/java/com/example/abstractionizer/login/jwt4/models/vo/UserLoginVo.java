@@ -6,4 +6,9 @@ import lombok.Data;
 @Data
 public class UserLoginVo {
     private String token;
+
+    public UserLoginVo setToken(String token){
+        this.token = token;
+        return this;
+    }
 }

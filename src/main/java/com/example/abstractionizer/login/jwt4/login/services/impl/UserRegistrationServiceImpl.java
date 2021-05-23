@@ -19,6 +19,8 @@ import static com.example.abstractionizer.login.jwt4.constants.RedisConstant.get
 @Service
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
+    private final Long registrationValidity = 5L;
+
     @Autowired
     private RedisUtil redisUtil;
 
@@ -27,7 +29,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     @Override
     public void setUserRegisterInfo(String uuid, User user) {
-        redisUtil.set(getUserRegistration(uuid), user, 5L, TimeUnit.MINUTES);
+        redisUtil.set(getUserRegistration(uuid), user, registrationValidity, TimeUnit.MINUTES);
     }
 
     @Override
@@ -42,7 +44,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     @Override
     public void setRegisteringUsername(String username) {
-        redisUtil.set(getRegisteringUserName(username), username, 5L, TimeUnit.MINUTES);
+        redisUtil.set(getRegisteringUserName(username), username, registrationValidity, TimeUnit.MINUTES);
     }
 
     @Override

@@ -17,7 +17,8 @@ public enum ErrorCode implements BaseError {
     NEW_OLD_PASSWORD_SAME(HttpStatus.BAD_REQUEST, "10011", "New password and old password cannot be the same"),
     NEW_PASSWORD_INCONSISTENCY(HttpStatus.BAD_REQUEST, "10012", "New passwords must be the same"),
     INVALID_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR, "10013", "Invalid Token"),
-    INVALID_METHOD_ARGUMENT(HttpStatus.BAD_REQUEST, "20000", "Invalid method argument")
+    INVALID_METHOD_ARGUMENT(HttpStatus.BAD_REQUEST, "20000", "Invalid method argument"),
+    INVALID_HEADER_ARGUMENT(HttpStatus.BAD_REQUEST, "30000", "Invalid header argument")
     ;
 
     ErrorCode(HttpStatus httpStatus, String code, String msg){
